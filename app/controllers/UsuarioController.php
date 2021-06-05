@@ -14,7 +14,6 @@ class UsuarioController extends Usuario implements IApiUsable
         $clave = $parametros['clave'];
         $sector = $parametros['sector'];
         $tipo = $parametros['tipo'];
-        $created_at = date("c",time());
 
 
         // Creamos el usuario
@@ -23,7 +22,7 @@ class UsuarioController extends Usuario implements IApiUsable
         $usr->clave = $clave;
         $usr->sector = $sector;
         $usr->tipo = $tipo;
-        $usr->created_at = $created_at;
+
         if($usr->save())
             $payload = json_encode(array("mensaje" => "Exito en el guardado del usuario"));
         else
