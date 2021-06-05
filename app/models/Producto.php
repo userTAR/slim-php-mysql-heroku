@@ -4,15 +4,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-class Usuario extends Model
+class Producto extends Model
 {
     use SoftDeletes;
 
-    /* Nombre de tabla "usuarios" por defecto */
+    /* Nombre de tabla "productos" por defecto */
     /* Primary key definida por default en "id"*/
     /* Id autoincremental seteado true por default */
 
-    protected $filalable = ['nombre','clave','sector','tipo'];
+    protected $filalable = ['nombre','tipo'];
 }
-
-?>
