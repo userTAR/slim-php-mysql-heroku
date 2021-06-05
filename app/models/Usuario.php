@@ -8,9 +8,9 @@ class Usuario extends Model
 {
     use SoftDeletes;
 
-    /* Nombre de tabla "usuarios" por defecto */
+    protected $table = 'usuarios';
+    public $incrementing = true;
     /* Primary key definida por default en "id"*/
-    /* Id autoincremental seteado true por default */
 
     protected $filalable = ['nombre','clave','sector','tipo'];
 }
