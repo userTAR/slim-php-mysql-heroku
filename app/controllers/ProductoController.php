@@ -1,45 +1,41 @@
 <?php
-require_once "./models/Usuario.php";
+require_once "./models/Producto.php";
 require_once './interfaces/IApiUsable.php';
 
-use \app\Models\Usuario as Usuario;
+use App\Models\Producto;
 
-class UsuarioController extends Usuario implements IApiUsable
+class ProductoController extends Producto implements IApiUsable
 {
     public function Alta($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
 
         $nombre = $parametros['nombre'];
-        $clave = $parametros['clave'];
-        $sector = $parametros['sector'];
         $tipo = $parametros['tipo'];
-        $created_at = date("c",time());
 
 
-        // Creamos el usuario
-        $usr = new Usuario();
-        $usr->nombre = $nombre;
-        $usr->clave = $clave;
-        $usr->sector = $sector;
-        $usr->tipo = $tipo;
-        $usr->created_at = $created_at;
-        if($usr->save())
-            $payload = json_encode(array("mensaje" => "Exito en el guardado del usuario"));
+        // Creamos el Producto
+        $prd = new Producto();
+        $prd->nombre = $nombre;
+        $prd->tipo = $tipo;
+        if($prd->save())
+            $payload = json_encode(array("mensaje" => "Exito en el guardado del producto"));
         else
-            $payload = json_encode(array("mensaje" => "Error en el guardado del usuario"));
+            $payload = json_encode(array("mensaje" => "Error en el guardado del producto"));
+
+
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function TraerUno($request, $response, $args)
     {
-        // Buscamos usuario por id
-        $id_usr = $args['id_usuario'];
+        // Buscamos Producto por id
+        $id_prd = $args['id_producto'];
         
-        $usr = Usuario::where('id', $id_usr)->first();
+        $prd = Producto::where('id', $id_prd)->first();
 
-        $payload = json_encode($usr);
+        $payload = json_encode($prd);
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -47,8 +43,8 @@ class UsuarioController extends Usuario implements IApiUsable
 
     public function TraerTodos($request, $response, $args)
     {
-        $lista = Usuario::all();
-        $payload = json_encode(array("listaUsuario" => $lista));
+        $lista = Producto::all();
+        $payload = json_encode(array("listaProducto" => $lista));
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -59,9 +55,9 @@ class UsuarioController extends Usuario implements IApiUsable
         $parametros = $request->getParsedBody();
 
         $nombre = $parametros['nombre'];
-        Usuario::modificarUsuario($nombre);
+        Producto::modificarProducto($nombre);
 
-        $payload = json_encode(array("mensaje" => "Usuario modificado con exito"));
+        $payload = json_encode(array("mensaje" => "Producto modificado con exito"));
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -71,10 +67,10 @@ class UsuarioController extends Usuario implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $usuarioId = $parametros['usuarioId'];
-        Usuario::borrarUsuario($usuarioId);
+        $ProductoId = $parametros['ProductoId'];
+        Producto::borrarProducto($ProductoId);
 
-        $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
+        $payload = json_encode(array("mensaje" => "Producto borrado con exito"));
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
