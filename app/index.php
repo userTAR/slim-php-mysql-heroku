@@ -52,7 +52,7 @@ $app->group('/alta', function (RouteCollectorProxy $group) {
   $app->group('/listado', function (RouteCollectorProxy $group) {
     $group->get('/{id_usuario}', \UsuarioController::class . ':TraerUno');
   });
-  
+
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
@@ -62,7 +62,7 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
   });
 
 $app->get('[/]', function (Request $request, Response $response) {    
-    $response->getBody()->write("Slim Framework 4 PHP");
+    $response->getBody()->write("Mensaje por default");
     return $response;
 
 });
