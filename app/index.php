@@ -47,7 +47,7 @@ $capsule->bootEloquent();
 
 // Routes
 $app->group('/alta', function (RouteCollectorProxy $group) {
-    $group->post('/usuario', \UsuarioController::class . ':Alta');
+    $group->post('/usuario/', \UsuarioController::class . ':Alta');
   
   });
 $app->group('/listado', function (RouteCollectorProxy $group) {
