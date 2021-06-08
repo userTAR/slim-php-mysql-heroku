@@ -11,6 +11,6 @@ class Mesa extends Model
     /* Primary key definida por default en "id"*/
     /* Id autoincremental seteado true por default */
 
-    protected $filalable = ['sector'];
+    protected $fillable = ['sector'];
 
 }

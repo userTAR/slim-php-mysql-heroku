@@ -46,18 +46,37 @@ $capsule->bootEloquent();
 
 
 // Routes
-$app->group('/alta', function (RouteCollectorProxy $group) {
-    $group->post('/usuario/', \UsuarioController::class . ':Alta');
-  
+$app->group('/alta/', function (RouteCollectorProxy $group) {
+    $group->post('usuario', \UsuarioController::class . ':Alta');
+    $group->post('producto', \ProductoController::class . ':Alta');
+    $group->post('Mesa', \MesaController::class . ':Alta');
   });
-$app->group('/listado', function (RouteCollectorProxy $group) {
-    $group->get('/{id_usuario}', \UsuarioController::class . ':TraerUno');
+$app->group('/listado/', function (RouteCollectorProxy $group){
+    $group->get('usuario/{id_usuario}', \UsuarioController::class . ':TraerUno');
+    $group->get('producto/{id_producto}', \ProductoController::class . ':TraerUno');
+    $group->get('mesa/{id_mesaa}', \MesaController::class . ':TraerUno');
   });
+$app->group('/listadoTodos/', function (RouteCollectorProxy $group) {
+  $group->get('usuario/{id_usuario}', \UsuarioController::class . ':TraerTodos');
+  $group->get('producto/{id_producto}', \ProductoController::class . ':TraerTodos');
+  $group->get('mesa/{id_mesaa}', \MesaController::class . ':TraerTodos');
+});
+$app->group('/modificar/', function (RouteCollectorProxy $group) {
+  $group->put('usuario/{id_usuario}', \UsuarioController::class . ':TraerTodos');
+  $group->put('producto/{id_producto}', \ProductoController::class . ':TraerTodos');
+  $group->put('mesa/{id_mesaa}', \MesaController::class . ':TraerTodos');
+});
+$app->group('/eliminar/', function (RouteCollectorProxy $group) {
+  $group->delete('usuario/{id_usuario}', \UsuarioController::class . ':BorrarUno');
+  $group->delete('producto/{id_producto}', \ProductoController::class . ':BorrarUno');
+  $group->delete('mesa/{id_mesaa}', \MesaController::class . ':BorrarUno');
+});
+
+
 
 $app->get('/mostrarMensaje', function (Request $request, Response $response) {    
-    $response->getBody()->write("Mensaje por default");
+    $response->getBody()->write("Mensaje por default nuevo");
     return $response;
-
 });
 
 $app->run();

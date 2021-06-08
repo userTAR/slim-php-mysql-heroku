@@ -46,7 +46,7 @@ class MesaController extends Mesa implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
     
-    /* public function ModificarUno($request, $response, $args)
+    public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
 
@@ -70,5 +70,5 @@ class MesaController extends Mesa implements IApiUsable
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
-    } */
+    }
 }

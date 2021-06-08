@@ -50,7 +50,7 @@ class ProductoController extends Producto implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
     
-    /* public function ModificarUno($request, $response, $args)
+    public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
 
@@ -74,5 +74,5 @@ class ProductoController extends Producto implements IApiUsable
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
-    } */
+    }
 }

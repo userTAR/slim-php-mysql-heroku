@@ -8,11 +8,14 @@ class Usuario extends Model
 {
     use SoftDeletes;
 
+    protected $primaryKey = 'id';
     protected $table = 'usuarios';
     public $incrementing = true;
-    /* Primary key definida por default en "id"*/
+    public $timestamps = false;
 
-    protected $filalable = ['nombre','clave','sector','tipo'];
+    protected $fillable = [
+        'nombre','clave','sector','tipo'
+    ];
 }
 
 ?>

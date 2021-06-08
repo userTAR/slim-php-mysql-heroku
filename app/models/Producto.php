@@ -12,5 +12,5 @@ class Producto extends Model
     /* Primary key definida por default en "id"*/
     /* Id autoincremental seteado true por default */
 
-    protected $filalable = ['nombre','tipo'];
+    protected $fillable = ['nombre','tipo'];
 }
