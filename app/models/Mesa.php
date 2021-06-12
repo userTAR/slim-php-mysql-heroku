@@ -10,7 +10,7 @@ class Mesa extends Model
     /* Nombre de tabla "mesas" por defecto */
     /* Primary key definida por default en "id"*/
     /* Id autoincremental seteado true por default */
-
+    public $timestamps = false;
     protected $fillable = ['sector'];
 
 }

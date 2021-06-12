@@ -10,11 +10,13 @@ class Usuario extends Model
 
     protected $primaryKey = 'id';
     protected $table = 'usuarios';
+    protected $deleted_at = 'baja';
     public $incrementing = true;
     public $timestamps = false;
 
+
     protected $fillable = [
-        'nombre','clave','sector','tipo'
+        'nombre','clave','sector','tipo','estado_id','alta','baja'
     ];
 }
 

@@ -8,5 +8,6 @@ class Pedido extends Model
     use SoftDeletes;
 
     
+    
 
 }
