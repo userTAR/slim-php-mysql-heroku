@@ -2,9 +2,9 @@
 require_once "./models/Producto.php";
 require_once './interfaces/IApiUsable.php';
 
-use App\Models\Producto;
+use App\Models\Producto as Producto;
 
-class ProductoController extends Producto implements IApiUsable
+class ProductoController implements IApiUsable
 {
     public function Alta($request, $response, $args)
     {
@@ -67,7 +67,7 @@ class ProductoController extends Producto implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $ProductoId = $parametros['ProductoId'];
+        $ProductoId = $parametros['id_producto'];
         Producto::borrarProducto($ProductoId);
 
         $payload = json_encode(array("mensaje" => "Producto borrado con exito"));

@@ -4,7 +4,7 @@ require_once './interfaces/IApiUsable.php';
 
 use \app\Models\Mesa as Mesa;
 
-class MesaController extends Mesa implements IApiUsable
+class MesaController implements IApiUsable
 {
     public function Alta($request, $response, $args)
     {
@@ -13,7 +13,7 @@ class MesaController extends Mesa implements IApiUsable
         $sector = $parametros['sector'];
 
 
-        // Creamos el Mesa
+        // Creamos la Mesa
         $msa = new Mesa();
         $msa->sector = $sector;
         if($msa->save())
@@ -27,7 +27,7 @@ class MesaController extends Mesa implements IApiUsable
     public function TraerUno($request, $response, $args)
     {
         // Buscamos Mesa por id
-        $id_msa = $args['id_Mesa'];
+        $id_msa = $args['id_mesa'];
         
         $msa = Mesa::where('id', $id_msa)->first();
 
@@ -63,7 +63,7 @@ class MesaController extends Mesa implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $MesaId = $parametros['MesaId'];
+        $MesaId = $parametros['id_mesa'];
         Mesa::borrarMesa($MesaId);
 
         $payload = json_encode(array("mensaje" => "Mesa borrado con exito"));

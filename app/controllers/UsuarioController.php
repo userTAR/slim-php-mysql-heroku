@@ -4,7 +4,7 @@ require_once './interfaces/IApiUsable.php';
 
 use \app\Models\Usuario as Usuario;
 
-class UsuarioController extends Usuario implements IApiUsable
+class UsuarioController implements IApiUsable
 {
     public function Alta($request, $response, $args)
     {
@@ -22,6 +22,9 @@ class UsuarioController extends Usuario implements IApiUsable
         $usr->clave = $clave;
         $usr->sector = $sector;
         $usr->tipo = $tipo;
+        $usr->estado_id = 1;
+        $usr->alta = date("c");
+        $usr->baja = null;
 
         if($usr->save())
             $payload = json_encode(array("mensaje" => "Exito en el guardado del usuario"));
@@ -36,7 +39,7 @@ class UsuarioController extends Usuario implements IApiUsable
         // Buscamos usuario por id
         $id_usr = $args['id_usuario'];
         
-        $usr = Usuario::where('id', $id_usr)->first();
+        $usr = Usuario::where('id' , $id_usr)->first();
 
         $payload = json_encode($usr);
 
