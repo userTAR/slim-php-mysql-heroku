@@ -5,12 +5,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Mesa extends Model
 {
-    use SoftDeletes;
+    /* use SoftDeletes; */
 
     /* Nombre de tabla "mesas" por defecto */
     /* Primary key definida por default en "id"*/
     /* Id autoincremental seteado true por default */
     public $timestamps = false;
-    protected $fillable = ['sector'];
+    protected $fillable = ['codigo','sector','id_estado'];
 
 }

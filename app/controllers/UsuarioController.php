@@ -1,8 +1,11 @@
 <?php
+namespace App\Controller;
+
 require_once "./models/Usuario.php";
 require_once './interfaces/IApiUsable.php';
 
 use \app\Models\Usuario as Usuario;
+use App\Interface\IApiUsable;
 
 class UsuarioController implements IApiUsable
 {
@@ -12,7 +15,7 @@ class UsuarioController implements IApiUsable
 
         $nombre = $parametros['nombre'];
         $clave = $parametros['clave'];
-        $sector = $parametros['sector'];
+        $sector = !empty($parametros['sector']) ? $parametros['sector'] : null;
         $tipo = $parametros['tipo'];
 
 

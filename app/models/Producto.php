@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Producto extends Model
 {
-    use SoftDeletes;
+    /* use SoftDeletes; */
 
     /* Nombre de tabla "productos" por defecto */
     /* Primary key definida por default en "id"*/

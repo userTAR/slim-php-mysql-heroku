@@ -1,8 +1,13 @@
 <?php
+namespace App\Controller;
+
 require_once "./models/Mesa.php";
 require_once './interfaces/IApiUsable.php';
+require_once "GeneratorController.php";
 
-use \app\Models\Mesa as Mesa;
+use App\Models\Mesa;
+use App\Interface\IApiUsable;
+use App\Controller\GeneratorController as GENERADOR;
 
 class MesaController implements IApiUsable
 {
@@ -11,13 +16,15 @@ class MesaController implements IApiUsable
         $parametros = $request->getParsedBody();
 
         $sector = $parametros['sector'];
-
+        $codigo = GENERADOR::GenerarCodigo_5_Caracteres();
 
         // Creamos la Mesa
         $msa = new Mesa();
+        $msa->codigo = $codigo;
         $msa->sector = $sector;
+        $msa->id_estado = 4;
         if($msa->save())
-            $payload = json_encode(array("mensaje" => "Exito en el guardado del Mesa"));
+            $payload = json_encode(array("mensaje" => "Exito en el guardado del Mesa", "codigo_mesa" => $codigo));
         else
             $payload = json_encode(array("mensaje" => "Error en el guardado del Mesa"));
         $response->getBody()->write($payload);
