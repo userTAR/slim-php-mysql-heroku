@@ -8,6 +8,7 @@ require_once "./controllers/MesaController.php";
 require_once './controllers/ProductoController.php';
 require_once "./controllers/PedidoController.php";
 require_once "./controllers/LoginController.php";
+require_once "./middlewares/AutentificadorMW.php";
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -19,6 +20,7 @@ use App\Controller\PedidoController;
 use App\Controller\ProductoController;
 use App\Controller\UsuarioController;
 use App\Controller\LoginController;
+use App\middlewares\AutentificadorMW;
 
 
 
@@ -56,33 +58,39 @@ $capsule->bootEloquent();
 
 // Routes
 $app->post('/iniciarSesion', LoginController::class .":InicioSesion");
+$app->post('/alta/pedido', PedidoController::class . ':Alta')->add(new AutentificadorMW("socio","mozo"));
 
 $app->group('/alta', function (RouteCollectorProxy $group) {
     $group->post('/usuario', UsuarioController::class .":Alta");
     $group->post('/producto', ProductoController::class . ':Alta');
     $group->post('/mesa', MesaController::class .':Alta');
-    $group->post('/pedido', PedidoController::class . ':Alta');
-  });
+  })->add(new AutentificadorMW("socio"));
+
+  
+
 $app->group('/listar', function (RouteCollectorProxy $group){
     $group->get('/usuario/{id_usuario}', UsuarioController::class . ':TraerUno');
     $group->get('/producto/{id_producto}', ProductoController::class . ':TraerUno');
     $group->get('/mesa/{id_mesa}', MesaController::class . ':TraerUno');
   });
+
 $app->group('/listarTodos', function (RouteCollectorProxy $group) {
   $group->get('/usuarios', UsuarioController::class . ':TraerTodos');
   $group->get('/productos', ProductoController::class . ':TraerTodos');
   $group->get('/mesas', MesaController::class . ':TraerTodos');
 });
+
 $app->group('/modificar', function (RouteCollectorProxy $group) {
   $group->put('/usuario/{id_usuario}', UsuarioController::class . ':ModificarUno');
   $group->put('/producto/{id_producto}', ProductoController::class . ':ModificarUno');
   $group->put('/mesa/{id_mesaa}', MesaController::class . ':ModificarUno');
-});
+})->add(new AutentificadorMW("socio"));
+
 $app->group('/eliminar', function (RouteCollectorProxy $group) {
   $group->delete('/usuario/{id_usuario}', UsuarioController::class . ':BorrarUno');
   $group->delete('/producto/{id_producto}', ProductoController::class . ':BorrarUno');
   $group->delete('/mesa/{id_mesaa}', MesaController::class . ':BorrarUno');
-});
+})->add(new AutentificadorMW("socio"));
 
 
 

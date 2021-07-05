@@ -1,14 +1,14 @@
 <?php
 namespace App\middlewares;
 
-require_once "./vendor/autoload.php";
-require_once "../models/Jwt.php";
+require_once __DIR__ ."/../../vendor/autoload.php";
+require_once "./models/Jwt.php";
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response as ResponseMW;
-use FFI\Exception;
 use App\Models\Token;
+use Exception as GlobalException;
 
 class AutentificadorMW
 {
@@ -22,34 +22,41 @@ class AutentificadorMW
     }
     public function __invoke(Request $request, RequestHandler $handler) : ResponseMW
     {
-        $header = $request->getHeaderLine('Authorization');
-        $token = trim(explode("Bearer", $header)[1]);
-        $aux = null;
         try
         {
+            $flag = false;
+            $header = $request->getHeaderLine('Authorization');
+            $token = trim(explode("Bearer", $header)[1]);
+            $aux = null;
             $tokenVerificado = Token::Verificar($token);
             if(self::$tipo2 == null)
             {
-                if($tokenVerificado == self::$tipo1)
-                    $response = $handler->handle($request);
+                if($tokenVerificado->perfil == self::$tipo1)
+                    $flag = true;
+                else
+                    $payload = json_encode(array("mensaje" => "Acceso Denegado"));
             }
             else
-                if($tokenVerificado == self::$tipo1 || $tokenVerificado == self::$tipo2)
-                    $response = $handler->handle($request);
-                    
-            $payload = json_encode(array("mensaje" => "Acceso Denegado"));
+                if($tokenVerificado->perfil == self::$tipo1 || $tokenVerificado->perfil == self::$tipo2)
+                    $flag = true;
+                else
+                    $payload = json_encode(array("mensaje" => "Acceso Denegado"));
         }
-        catch (Exception $e)
+        catch (GlobalException $e)
         {
             $aux['mensaje'] = $e->getMessage();
             $response = new ResponseMW();
-            //token no valido
-            if($aux['flag'] == true)
-                $payload = json_encode(array('mensaje' => $aux['mensaje']));
+            $payload = json_encode(array('mensaje' => $aux['mensaje']));
         }
+        if($flag != true)
+        {
+            $response->getBody()->write($payload);
+            $response->withHeader('Content-Type', 'application/json');
+        }
+        else
+            $response = $handler->handle($request);
         
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
+        return $response;
     }
 }
 

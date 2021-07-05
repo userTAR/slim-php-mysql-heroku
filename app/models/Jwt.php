@@ -1,39 +1,44 @@
 <?php
 namespace App\Models;
 
-require_once "./vendor/autoload.php";
+require_once './../vendor/autoload.php';
 
+use Exception as GlobalException;
 use Firebase\JWT\JWT;
-use FFI\Exception;
 use Firebase\JWT\ExpiredException;
+use Firebase\JWT\SignatureInvalidException;
 
 class Token
 {
     private static $password = "password123";
-    private static $encode = ['HS256'];
+    private static $encode = array('HS256');
 
     public static function Crear($usuario)
     {
-        $data = array("nombre" => $usuario->nombre, "perfil" => $usuario->perfil, "estado" => $usuario->estadoId);
+        $data = array("nombre" => $usuario->nombre, "perfil" => $usuario->tipo, "estado" => $usuario->estadoId);
         $time = time();
         $payload = array(
             'iat'=> $time,
             'exp'=> $time + (10*60),
             'data' => $data,    
         );
-        return JWT::encode($payload,self::$password,self::$encode);
+        return JWT::encode($payload,self::$password,self::$encode[0]);
     }
 
     public static function Verificar($token){
         if(empty($token)|| $token=="")
-            throw new Exception("El token esta vacio.");
-        try 
+            throw new GlobalException("El token esta vacio.");
+        try
         {
             $decodificado = self::ObtenerDatos($token);
         }
         catch (ExpiredException $e)
         {
-           throw new Exception("Clave fuera de tiempo");
+            throw new GlobalException("Clave fuera de tiempo");
+        }
+        catch (SignatureInvalidException $e)
+        {
+            throw new GlobalException("Token incorrecto");
         }
         return $decodificado;
     }

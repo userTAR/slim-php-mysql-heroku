@@ -1,11 +1,14 @@
 <?php
 namespace App\Controller;
-require_once "../models/Jwt.php";
-require_once "../models/Usuario.php";
+
+/* require_once "../models/Jwt.php";
+require_once "../models/Usuario.php"; */
+require_once "PerfilUsuarioController.php";
 
 use App\Models\Token;
 use App\Models\Usuario;
 use stdClass;
+use App\Controller\PerfilUsuarioController;
 
 class LoginController 
 {
@@ -13,13 +16,14 @@ class LoginController
     {
         $parametros = $request->getParsedBody();
         $usr = new Usuario();
-        $check = $usr->where("nombre","=",$parametros['nombre'])->where("clave","=",$parametros['clave'])->get();
+        $check = $usr->where("nombre","=",$parametros['nombre'])->where("clave","=",$parametros['clave'])->first();
+        $tipoPerfil = PerfilUsuarioController::RetornarPerfilPorId($check->tipo);
         if($check != null)
         {
             $usuario = new stdClass();
-            $usuario->nombre = $parametros['nombre'];
-            $usuario->perfil = $parametros['perfil'];
-            $usuario->estadoId = $parametros['estado_id'];
+            $usuario->nombre = $check->nombre;
+            $usuario->tipo = $tipoPerfil;
+            $usuario->estadoId = $check->estado_id;
 
             $payload = json_encode(array("mensaje" => "Sesion iniciada", "token" => Token::Crear($usuario)));
         }

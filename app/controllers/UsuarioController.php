@@ -3,9 +3,13 @@ namespace App\Controller;
 
 require_once "./models/Usuario.php";
 require_once './interfaces/IApiUsable.php';
+require_once "PerfilUsuarioController.php";
+require_once __DIR__ ."/../models/ListaEmpleadosProductos.php";
 
-use \app\Models\Usuario as Usuario;
+use App\Models\Usuario as Usuario;
 use App\Interface\IApiUsable;
+use App\Controller\PerfilUsuarioController;
+use App\Models\ListaEmpleadosProductos;
 
 class UsuarioController implements IApiUsable
 {
@@ -16,23 +20,28 @@ class UsuarioController implements IApiUsable
         $nombre = $parametros['nombre'];
         $clave = $parametros['clave'];
         $sector = !empty($parametros['sector']) ? $parametros['sector'] : null;
-        $tipo = $parametros['tipo'];
+        $tipo = PerfilUsuarioController::RetornarIdPorPerfil($parametros['tipo']);
+        
+        if($tipo != null)
+        {   
+            // Creamos el usuario
+            $usr = new Usuario();
+            $usr->nombre = $nombre;
+            $usr->clave = $clave;
+            $usr->sector = $sector;
+            $usr->tipo = $tipo;
+            $usr->estado_id = 1;
+            $usr->alta = date("Y-m-d H:i:s");
+            $usr->baja = null;
 
-
-        // Creamos el usuario
-        $usr = new Usuario();
-        $usr->nombre = $nombre;
-        $usr->clave = $clave;
-        $usr->sector = $sector;
-        $usr->tipo = $tipo;
-        $usr->estado_id = 1;
-        $usr->alta = date("c");
-        $usr->baja = null;
-
-        if($usr->save())
-            $payload = json_encode(array("mensaje" => "Exito en el guardado del usuario"));
+            if($usr->save())
+                $payload = json_encode(array("mensaje" => "Exito en el guardado del usuario"));
+            else
+                $payload = json_encode(array("mensaje" => "Error en el guardado del usuario"));
+        }
         else
-            $payload = json_encode(array("mensaje" => "Error en el guardado del usuario"));
+            $payload = json_encode(array("mensaje" => "Error en el guardado del usuario, tipo de perfil inexistente"));
+        
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
@@ -91,5 +100,36 @@ class UsuarioController implements IApiUsable
         $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Devuelve la llave (EL ID) del empleado menos ocupado según el rubro (bar, cerveza, comida) que se le haya pasado como parámetro
+     * @param 
+     */
+    static function ReturnIdEmpleadoMenosOcupadoSegun_Seccion($seccion)
+    {
+        $usuarios = new Usuario();
+        $listaUsuarios = $usuarios::where("tipo",$seccion)->get();
+
+        $PedidosLista = new ListaEmpleadosProductos();
+        //obtengo la cantidad de veces que aparece cada empleado y lo guardo en {variable[user-id]} = {cantidad de veces que aparece}
+        foreach($listaUsuarios as $user)
+        {
+            $repeticiones = $PedidosLista::where("id_empleado",$user->id)->count();
+            $array[$user->id] = $repeticiones;
+        }
+        $flag = true;
+        $menor = null;
+        //busco cual es el menor y guardo el ID
+        foreach($array as $key => $value)
+        {
+            if($flag == true || $value < $menor)
+            {
+                $flag = false;
+                $menor = $key;
+            }
+        }
+
+        return $menor;
     }
 }

@@ -1,18 +1,19 @@
 <?php
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
-class Usuario extends Model
+class PerfilUsuario extends Model
 {
+
     protected $primaryKey = 'id';
+    protected $table = 'perfilesusuarios';
     public $incrementing = true;
-    protected $table = 'usuarios';
-    public $timestamps = false;
+
 
     protected $fillable = [
-        'nombre','clave','sector','tipo','estado_id','alta','baja'
+        'id','perfil'
     ];
 }
 

@@ -6,6 +6,7 @@ require_once './interfaces/IApiUsable.php';
 
 use App\Models\Producto as Producto;
 use App\Interface\IApiUsable;
+use App\Models\TipoProducto;
 
 class ProductoController implements IApiUsable
 {
@@ -15,16 +16,22 @@ class ProductoController implements IApiUsable
 
         $nombre = $parametros['nombre'];
         $tipo = $parametros['tipo'];
-
-
-        // Creamos el Producto
-        $prd = new Producto();
-        $prd->nombre = $nombre;
-        $prd->tipo = $tipo;
-        if($prd->save())
-            $payload = json_encode(array("mensaje" => "Exito en el guardado del producto"));
+        $matchTipo = TipoProductoController::RetornarIdSegunTipo($tipo);
+        if($matchTipo != null)
+        {
+            // Creamos el Producto
+            $prd = new Producto();
+            $prd->nombre = $nombre;
+            $prd->tipo = $matchTipo;
+            if($prd->save())
+                $payload = json_encode(array("mensaje" => "Exito en el guardado del producto"));
+            else
+                $payload = json_encode(array("mensaje" => "Error en el guardado del producto"));
+        }
         else
-            $payload = json_encode(array("mensaje" => "Error en el guardado del producto"));
+        {
+            $payload = json_encode(array("mensaje" => "Error en el guardado, tipo no valido"));
+        }
 
 
         $response->getBody()->write($payload);
