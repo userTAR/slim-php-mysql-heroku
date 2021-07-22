@@ -11,7 +11,7 @@ use App\Interface\IApiUsable;
 use App\Controller\PerfilUsuarioController;
 use App\Models\ListaEmpleadosProductos;
 
-class UsuarioController implements IApiUsable
+class UsuarioController //implementar API
 {
     public function Alta($request, $response, $args)
     {
@@ -95,16 +95,18 @@ class UsuarioController implements IApiUsable
         $usuarioId = $parametros['id_usuario'];
 
         $usr = Usuario::find($usuarioId);
-        $usr->delete();
-
-        $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
+        if($usr->delete())
+            $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
+        else
+            $payload = json_encode(array("mensaje" => "No se pudo borrar el usuario"));
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
 
     /**
      * Devuelve la llave (EL ID) del empleado menos ocupado según el rubro (bar, cerveza, comida) que se le haya pasado como parámetro
-     * @param 
+     * @param Seccion : La seccion de donde se quiere buscar
+     * @return Menor : Devuelve el ID del empleado menos ocupado
      */
     static function ReturnIdEmpleadoMenosOcupadoSegun_Seccion($seccion)
     {

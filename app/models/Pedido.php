@@ -7,7 +7,7 @@ class Pedido extends Model
 {
     /* use SoftDeletes; */
     public $timestamps = false;
-    protected $fillable = ['codigo','codigo_mesa','id_cliente','id_mozo','lista','estado','eta'];
+    protected $fillable = ['codigo','codigo_mesa','id_cliente','id_mozo','lista','estado','pedido_time','eta','entrega_time'];
     
 
 }

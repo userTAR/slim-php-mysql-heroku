@@ -2,13 +2,11 @@
 namespace App\Controller;
 
 require_once "./models/Producto.php";
-require_once './interfaces/IApiUsable.php';
 
 use App\Models\Producto as Producto;
-use App\Interface\IApiUsable;
 use App\Models\TipoProducto;
 
-class ProductoController implements IApiUsable
+class ProductoController
 {
     public function Alta($request, $response, $args)
     {

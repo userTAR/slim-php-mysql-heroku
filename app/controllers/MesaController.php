@@ -1,17 +1,23 @@
 <?php
 namespace App\Controller;
 
-require_once "./models/Mesa.php";
-require_once './interfaces/IApiUsable.php';
+require_once __DIR__ ."/../models/Mesa.php";
+require_once __DIR__ ."/../interfaces/IMesa.php";
+require_once __DIR__ ."/../../vendor/autoload.php";
 require_once "GeneratorController.php";
+require_once "EstadosController.php";
 
 use App\Models\Mesa;
-use App\Interface\IApiUsable;
+use App\Models\Pedido;
+use App\Controller\EstadosController as ESTADOS;
 use App\Controller\GeneratorController as GENERADOR;
+use App\Interface\IMesa;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
-class MesaController implements IApiUsable
+class MesaController implements Imesa
 {
-    public function Alta($request, $response, $args)
+    public function Alta(Request $request, Response $response, Array $args): Response
     {
         $parametros = $request->getParsedBody();
 
@@ -31,7 +37,7 @@ class MesaController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function TraerUno($request, $response, $args)
+    public function TraerUno(Request $request, Response $response, Array $args): Response
     {
         // Buscamos Mesa por id
         $id_msa = $args['id_mesa'];
@@ -44,7 +50,7 @@ class MesaController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function TraerTodos($request, $response, $args)
+    public function TraerTodos(Request $request, Response $response, Array $args): Response
     {
         $lista = Mesa::all();
         $payload = json_encode(array("listaMesa" => $lista));
@@ -52,21 +58,8 @@ class MesaController implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
-    
-    public function ModificarUno($request, $response, $args)
-    {
-        $parametros = $request->getParsedBody();
 
-        $nombre = $parametros['nombre'];
-        Mesa::modificarMesa($nombre);
-
-        $payload = json_encode(array("mensaje" => "Mesa modificado con exito"));
-
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
-    }
-
-    public function BorrarUno($request, $response, $args)
+    public function BorrarUno(Request $request, Response $response, Array $args): Response
     {
         $parametros = $request->getParsedBody();
 
@@ -74,6 +67,49 @@ class MesaController implements IApiUsable
         Mesa::borrarMesa($MesaId);
 
         $payload = json_encode(array("mensaje" => "Mesa borrado con exito"));
+
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * El cliente ingresa su número de pedido y el número de mesa y devuelve el tiempo estimado de arribo del pedido
+     */
+    public function ConsultarTiempo(Request $request, Response $response, array $args): Response
+    {
+        $parametros = $request->getParsedBody();
+
+        $codigoMesa = $parametros["codigo_mesa"];
+        $codigoPedido = $parametros["codigo_pedido"];
+
+        $pedido = Pedido::where('codigo',$codigoPedido)->where('codigo_mesa',$codigoMesa)->first();
+
+        if($pedido->eta == null)
+            $payload = json_encode(array("mensaje"=>"su pedido aun no fue tomado, consulte más tarde"));
+        else
+            $payload = json_encode(array("mensaje" => $pedido->eta));
+        
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type','application/json');
+    }
+
+    //solo deberían poder acceder los socios
+    /**
+     * Se cambia el estado de la mesa a "cerrada" y se guarda el movimiento en el historial de mesas
+     */
+    public function CerrarMesa(Request $request, Response $response, array $args): Response
+    {
+        $parametros = $request->getParsedBody();
+
+        $idMesa = $parametros["id_mesa"];
+
+        $mesa = Mesa::where("id",$idMesa)->where("estado",ESTADOS::ReturnIdSegunEstado_Mesa("con cliente pagando"))->first();
+        HistorialesController::AltaEnHistorial($mesa->id,$mesa->estado,ESTADOS::ReturnIdSegunEstado_Mesa("cerrada"),"mesa");
+        $mesa->id_estado = ESTADOS::ReturnIdSegunEstado_Mesa("cerrada");
+        if($mesa->save())
+            $payload = json_encode(array("mensaje" => "Mesa cerrada"));
+        else
+            $payload = json_encode(array("mensaje" => "Fallo en el cierre de mesa"));
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');

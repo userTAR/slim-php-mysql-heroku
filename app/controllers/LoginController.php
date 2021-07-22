@@ -1,8 +1,6 @@
 <?php
 namespace App\Controller;
 
-/* require_once "../models/Jwt.php";
-require_once "../models/Usuario.php"; */
 require_once "PerfilUsuarioController.php";
 
 use App\Models\Token;
