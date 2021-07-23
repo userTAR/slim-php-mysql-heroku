@@ -11,7 +11,7 @@ use App\Models\Mesa;
 use App\Models\Pedido;
 use App\Controller\EstadosController as ESTADOS;
 use App\Controller\GeneratorController as GENERADOR;
-use App\Interface\IMesa;
+use App\Interfaces\IMesa;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

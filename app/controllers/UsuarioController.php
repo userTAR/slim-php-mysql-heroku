@@ -7,7 +7,7 @@ require_once "PerfilUsuarioController.php";
 require_once __DIR__ ."/../models/ListaEmpleadosProductos.php";
 
 use App\Models\Usuario as Usuario;
-use App\Interface\IApiUsable;
+/* use App\Interfaces\IApiUsable; */
 use App\Controller\PerfilUsuarioController;
 use App\Models\ListaEmpleadosProductos;
 
@@ -133,5 +133,22 @@ class UsuarioController //implementar API
         }
 
         return $menor;
+    }
+
+    /**
+     * Devuelve un array con todos los id de los empleados que pertenezcan al sector pasado por parametro
+     * @param String $sector El sector en el que se quiere buscar los empleados
+     * @return Array Devuelve un array con todos los ID's de los empleados que esten en ese sector
+     */
+    static function ListaIdEmpleados_Sector($sector)
+    {
+        $retorno = array();
+
+        $lista = Usuario::where('sector',$sector)->get();
+        foreach ($lista as $key => $value) {
+            array_push($retorno,$lista->id);
+        }
+
+        return $retorno;
     }
 }

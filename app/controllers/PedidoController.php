@@ -16,7 +16,7 @@ require_once "UsuarioController.php";
 use \app\Models\Pedido;
 use App\Models\Usuario; //solo se usa en "TomarPedido"
 use App\Models\Mesa;
-use App\Interface\IPedido;
+use App\Interfaces\IPedido;
 use App\Models\ListaEmpleadosProductos as LEA;
 use App\Controller\GeneratorController as GENERADOR;
 use App\Controller\EstadosController as ESTADOS;
