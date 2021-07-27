@@ -57,7 +57,7 @@ class ConsultasPedidos
         }
         else
         {
-            $pedidosID = Pedido::whereBetween('pedido_time',[$fechaAntes,$fechaDespues])->where(ESTADOS::ReturnIdSegunEstado_Pedido("abonado"))->get();
+            $pedidosID = Pedido::whereBetween('pedido_time',[$fechaAntes,$fechaDespues])->where('estado',ESTADOS::ReturnIdSegunEstado_Pedido("abonado"))->get();
 
             foreach ($pedidosID as $key => $value) {
                 $pedidosMatcheados->push(LEA::where('id_pedido',$value->id)->get());
@@ -97,11 +97,11 @@ class ConsultasPedidos
 
         if($fechaAntes == null && $fechaDespues == null)
         {
-            $lista = "error, datos vacios";
+            $menosPedido = "error, datos vacios";
         }
         else if($fechaDespues == null)
         {
-            $pedidosID = Pedido::where('pedido_time',$fechaAntes)->where(ESTADOS::ReturnIdSegunEstado_Pedido("abonado"))->get();
+            $pedidosID = Pedido::where('pedido_time',$fechaAntes)->where('estado',ESTADOS::ReturnIdSegunEstado_Pedido("abonado"))->get();
 
             foreach ($pedidosID as $key => $value) {
                 $pedidosMatcheados->push(LEA::where('id_pedido',$value->id)->get());
@@ -125,7 +125,7 @@ class ConsultasPedidos
         }
         else
         {
-            $pedidosID = Pedido::whereBetween('pedido_time',[$fechaAntes,$fechaDespues])->where(ESTADOS::ReturnIdSegunEstado_Pedido("abonado"))->get();
+            $pedidosID = Pedido::whereBetween('pedido_time',[$fechaAntes,$fechaDespues])->where('estado',ESTADOS::ReturnIdSegunEstado_Pedido("abonado"))->get();
 
             foreach ($pedidosID as $key => $value) {
                 $pedidosMatcheados->push(LEA::where('id_pedido',$value->id)->get());
