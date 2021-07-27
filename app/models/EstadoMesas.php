@@ -8,6 +8,6 @@ class EstadoMesas extends Model
     protected $table = 'estadomesas';
 
     protected $fillable = [
-        'estado'
+        'id','estado'
     ];
 }

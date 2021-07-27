@@ -8,9 +8,9 @@ use App\Models\Encuesta;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class EncuentasController
+class EncuestasController
 {
-    public function AltaEncuenta(Request $request, Response $response, array $args) : Response
+    public function AltaEncuesta(Request $request, Response $response, array $args) : Response
     {
         $parametros = $request->getParsedBody();
 

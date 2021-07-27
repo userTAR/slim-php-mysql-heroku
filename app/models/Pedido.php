@@ -1,13 +1,11 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pedido extends Model
 {
-    /* use SoftDeletes; */
     public $timestamps = false;
-    protected $fillable = ['codigo','codigo_mesa','id_cliente','id_mozo','lista','estado','pedido_time','eta','entrega_time'];
+    protected $fillable = ['codigo','codigo_mesa','id_cliente','id_mozo','lista','factura','estado','pedido_time','eta','entrega_time'];
     
 
 }

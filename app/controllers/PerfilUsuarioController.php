@@ -11,7 +11,7 @@ class PerfilUsuarioController
     {
         $perfil = new PerfilUsuario();
 
-        $retornoPerfil = $perfil::where("id","=",$id)->first();
+        $retornoPerfil = $perfil::where("id",$id)->first();
 
         return $retornoPerfil->perfil;
     }
@@ -20,7 +20,7 @@ class PerfilUsuarioController
     {
         $perfilLook = new PerfilUsuario();
 
-        $retornoPerfil = $perfilLook::where("perfil","=",$perfil)->first();
+        $retornoPerfil = $perfilLook::where("perfil",$perfil)->first();
 
         return $retornoPerfil->id;
     }

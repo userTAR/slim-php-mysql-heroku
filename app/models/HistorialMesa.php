@@ -7,6 +7,7 @@ class HistorialMesa extends Model
     public $incrementing = true;
     protected $primaryKey = 'id';
     protected $table = 'historialmesas';
+    public $timestamps = false;
     protected $fillable = [
         'id_mesa','id_estado','id_estado_new','fecha_cambio'
     ];

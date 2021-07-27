@@ -10,16 +10,12 @@ class TipoProductoController
 {
     static function RetornarIdSegunTipo($tipo)
     {
-        $tipo = new TipoProducto();
-        $match = $tipo::where("tipo",$tipo)->first();
-
+        $match = TipoProducto::where("tipo",$tipo)->first();
         return $match->id;
     }
     static function RetornarTipoSegunId($id)
     {
-        $tipo = new TipoProducto();
-        $match = $tipo::where("id",$id)->first();
-
+        $match = TipoProducto::where("id",$id)->first();
         return $match->tipo;
     }
 

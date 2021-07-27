@@ -4,10 +4,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class EstadoUsuarios extends Model
 {
+    protected $primaryKey = 'id';
+    public $incrementing = true;
+    protected $table = 'estadousuarios';
     public $timestamps = false;
-    protected $table = 'estadomesas';
 
     protected $fillable = [
-        'estado'
+        'id','estado'
     ];
 }

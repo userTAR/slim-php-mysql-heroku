@@ -1,0 +1,2 @@
+id,codigo,"codigo mesa","id cliente","id mozo",factura,estado,"fecha de pedido",ETA,entrega
+17,HYbGs,LyjZL,41,7,"[{""id"":3,""nombre"":""Seven Up"",""precio"":120,""tipo"":""bar""},{""id"":7,""nombre"":""Levite Pomelo"",""precio"":60,""tipo"":""bar""},{""id"":5,""nombre"":""Ñoquis"",""precio"":550,""tipo"":""cocina""}]",730,abonado,2021-07-27,"2021-07-27 00:13:29","2021-07-27 05:13:45"

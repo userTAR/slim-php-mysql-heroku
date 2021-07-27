@@ -2,16 +2,14 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
-class Usuario extends Model
+class HistorialLista extends Model
 {
     protected $primaryKey = 'id';
     public $incrementing = true;
-    protected $table = 'usuarios';
+    protected $table = 'historial_productos_empleados';
     public $timestamps = false;
 
     protected $fillable = [
-        'nombre','clave','sector','tipo','estado_id','alta','baja'
+        'id_empleado','id_pedido','id_producto_pedido','id_estado','id_estado_new','fecha_cambio'
     ];
 }
-
-?>

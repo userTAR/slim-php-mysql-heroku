@@ -8,6 +8,6 @@ class EstadoPedidos extends Model
     protected $table = 'estadopedidos';
 
     protected $fillable = [
-        'estado'
+        'id','estado'
     ];
 }

@@ -1,19 +1,24 @@
 <?php
 namespace App\Controller;
 
-require_once "./models/Usuario.php";
-require_once './interfaces/IApiUsable.php';
-require_once "PerfilUsuarioController.php";
+require_once __DIR__ ."/../../vendor/autoload.php";
+require_once __DIR__ ."/../models/Usuario.php";
 require_once __DIR__ ."/../models/ListaEmpleadosProductos.php";
+require_once "PerfilUsuarioController.php";
+require_once "HistorialesController.php";
+require_once "EstadosController.php";
 
 use App\Models\Usuario as Usuario;
-/* use App\Interfaces\IApiUsable; */
-use App\Controller\PerfilUsuarioController;
 use App\Models\ListaEmpleadosProductos;
+use App\Controller\HistorialesController;
+use App\Controller\PerfilUsuarioController;
+use App\Controller\EstadosController;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
-class UsuarioController //implementar API
+class UsuarioController
 {
-    public function Alta($request, $response, $args)
+    public function Alta(Request $request, Response $response, array $args) : Response
     {
         $parametros = $request->getParsedBody();
 
@@ -24,7 +29,7 @@ class UsuarioController //implementar API
         
         if($tipo != null)
         {   
-            // Creamos el usuario
+            // Creamos el usuario 
             $usr = new Usuario();
             $usr->nombre = $nombre;
             $usr->clave = $clave;
@@ -35,7 +40,11 @@ class UsuarioController //implementar API
             $usr->baja = null;
 
             if($usr->save())
+            {
+                $usr = Usuario::where('nombre',$nombre)->where('clave',$clave)->first();
+                HistorialesController::AltaEnHistorial($usr->id,EstadosController::ReturnIdSegunEstado_Usuario("activo"),EstadosController::ReturnIdSegunEstado_Usuario("activo"),"usuario");
                 $payload = json_encode(array("mensaje" => "Exito en el guardado del usuario"));
+            }
             else
                 $payload = json_encode(array("mensaje" => "Error en el guardado del usuario"));
         }
@@ -46,7 +55,7 @@ class UsuarioController //implementar API
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function TraerUno($request, $response, $args)
+    public function TraerUno(Request $request, Response $response, array $args) : Response
     {
         // Buscamos usuario por id
         $id_usr = $args['id_usuario'];
@@ -59,7 +68,7 @@ class UsuarioController //implementar API
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function TraerTodos($request, $response, $args)
+    public function TraerTodos(Request $request, Response $response, array $args) : Response
     {
         $lista = Usuario::all();
         $payload = json_encode(array("listaUsuario" => $lista));
@@ -68,19 +77,21 @@ class UsuarioController //implementar API
         return $response->withHeader('Content-Type', 'application/json');
     }
     
-    public function ModificarUno($request, $response, $args)
+    public function ModificarUno(Request $request, Response $response, array $args) : Response
     {
         $parametros = $request->getParsedBody();
 
         $id = $parametros["id"];
         $nombre = $parametros["nombre"];
         $tipo = $parametros["tipo"];
+        $sector = isset($parametros["sector"]) ? $parametros["sector"] : null;
 
         $usr = Usuario::find($id);
         $usr->nombre = $nombre;
-        $usr->tipo = $tipo;
+        $usr->tipo = PerfilUsuarioController::RetornarIdPorPerfil("socio");
+        $usr->sector = $sector;
 
-        if($usr->save())
+        if($usr->save() && HistorialesController::AltaEnHistorial($usr->id,EstadosController::ReturnIdSegunEstado_Usuario("activo"),EstadosController::ReturnIdSegunEstado_Usuario("activo"),"usuario"))
             $payload = json_encode(array("mensaje" => "Éxito en la modificación del usuario"));
         else
             $payload = json_encode(array("mensaje" => "Error en la modificación del usuario"));
@@ -88,14 +99,17 @@ class UsuarioController //implementar API
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function BorrarUno($request, $response, $args)
+    public function BorrarUno(Request $request, Response $response, array $args) : Response
     {
         $parametros = $request->getParsedBody();
 
         $usuarioId = $parametros['id_usuario'];
 
         $usr = Usuario::find($usuarioId);
-        if($usr->delete())
+        $usr->estado_id = EstadosController::ReturnIdSegunEstado_Usuario("suspendido");
+        $usr->baja = date("Y-m-d H:i:s");
+    
+        if($usr->save() && HistorialesController::AltaEnHistorial($usr->id,EstadosController::ReturnIdSegunEstado_Usuario("activo"),EstadosController::ReturnIdSegunEstado_Usuario("suspendido"),"usuario"))
             $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
         else
             $payload = json_encode(array("mensaje" => "No se pudo borrar el usuario"));
@@ -105,19 +119,30 @@ class UsuarioController //implementar API
 
     /**
      * Devuelve la llave (EL ID) del empleado menos ocupado según el rubro (bar, cerveza, comida) que se le haya pasado como parámetro
-     * @param Seccion : La seccion de donde se quiere buscar
-     * @return Menor : Devuelve el ID del empleado menos ocupado
+     * @param String $seccion : La seccion de donde se quiere buscar
+     * @return Int Devuelve el ID del empleado menos ocupado
      */
-    static function ReturnIdEmpleadoMenosOcupadoSegun_Seccion($seccion)
+    static function ReturnIdEmpleadoMenosOcupadoSegun_TipoProducto($seccion)
     {
-        $usuarios = new Usuario();
-        $listaUsuarios = $usuarios::where("tipo",$seccion)->get();
+        switch($seccion)
+        {
+            case "bar":
+                $listaUsuarios = Usuario::where("tipo",PerfilUsuarioController::RetornarIdPorPerfil("bartender"))->where('estado_id',EstadosController::ReturnIdSegunEstado_Usuario("activo"))->get();
+                break;
 
-        $PedidosLista = new ListaEmpleadosProductos();
-        //obtengo la cantidad de veces que aparece cada empleado y lo guardo en {variable[user-id]} = {cantidad de veces que aparece}
+            case "cerveza":
+                $listaUsuarios = Usuario::where("tipo",PerfilUsuarioController::RetornarIdPorPerfil("cervecero"))->where('estado_id',EstadosController::ReturnIdSegunEstado_Usuario("activo"))->get();
+                break;
+            
+            case "cocina":
+                $listaUsuarios = Usuario::where("tipo",PerfilUsuarioController::RetornarIdPorPerfil("cocinero"))->where('estado_id',EstadosController::ReturnIdSegunEstado_Usuario("activo"))->get();
+                break;
+        }
+
+        //obtengo la cantidad de veces que aparece cada empleado y lo guardo en {variable[user->id]} = {cantidad de veces que aparece}
         foreach($listaUsuarios as $user)
         {
-            $repeticiones = $PedidosLista::where("id_empleado",$user->id)->count();
+            $repeticiones = ListaEmpleadosProductos::where("id_empleado",$user->id)->count();
             $array[$user->id] = $repeticiones;
         }
         $flag = true;
@@ -146,7 +171,18 @@ class UsuarioController //implementar API
 
         $lista = Usuario::where('sector',$sector)->get();
         foreach ($lista as $key => $value) {
-            array_push($retorno,$lista->id);
+            array_push($retorno,$value->id);
+        }
+
+        return $retorno;
+    }
+    static function ListaIdTodosLosEmpleados()
+    {
+        $retorno = array();
+
+        $lista = Usuario::whereNotNull('sector')->get();
+        foreach ($lista as $key => $value) {
+            array_push($retorno,$value->id);
         }
 
         return $retorno;

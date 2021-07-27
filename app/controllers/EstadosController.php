@@ -1,8 +1,8 @@
 <?php
 namespace App\Controller;
-require_once "../models/EstadoUsuarios.php";
-require_once "../models/EstadoMesa.php";
-require_once "../models/EstadoPedido.php";
+require_once __DIR__ ."/../models/EstadoUsuarios.php";
+require_once __DIR__ ."/../models/EstadoMesas.php";
+require_once __DIR__ ."/../models/EstadoPedidos.php";
 
 use App\Models\EstadoMesas as EMesa;
 use App\Models\EstadoPedidos as EPedido;
@@ -18,9 +18,7 @@ class EstadosController
      */
     static function ReturnIdSegunEstado_Mesa($estadoBuscado)
     {
-        $estado = new EMesa();
-
-        $retorno = $estado::where("estado",$estadoBuscado)->first();
+        $retorno = EMesa::where("estado",$estadoBuscado)->first();
 
         return $retorno->id;
     }
@@ -32,9 +30,7 @@ class EstadosController
      */
     static function ReturnEstadoSegunId_Mesa($id)
     {
-        $estado = new EMesa();
-
-        $retorno = $estado::where("id",$id)->first();
+        $retorno = EMesa::where("id",$id)->first();
 
         return $retorno->estado;
     }
@@ -46,9 +42,7 @@ class EstadosController
      */
     static function ReturnIdSegunEstado_Pedido($estadoBuscado)
     {
-        $estado = new EPedido();
-
-        $retorno = $estado::where("estado",$estadoBuscado)->first();
+        $retorno = EPedido::where("estado",$estadoBuscado)->first();
 
         return $retorno->id;
     }
@@ -60,9 +54,7 @@ class EstadosController
      */
     static function ReturnEstadoSegunId_Pedido($id)
     {
-        $estado = new EPedido();
-
-        $retorno = $estado::where("id",$id)->first();
+        $retorno = EPedido::where("id",$id)->first();
 
         return $retorno->estado;
     }
@@ -74,11 +66,10 @@ class EstadosController
      */
     static function ReturnIdSegunEstado_Usuario($estadoBuscado)
     {
-        $estado = new EUsuario();
+        $retorno = EUsuario::where("estado",$estadoBuscado)->first();
+        $id = $retorno->id;
 
-        $retorno = $estado::where("estado",$estadoBuscado)->first();
-
-        return $retorno->id;
+        return $id;
     }
 
     /**
@@ -88,9 +79,7 @@ class EstadosController
      */
     static function ReturnEstadoSegunId_Usuario($id)
     {
-        $estado = new EUsuario();
-
-        $retorno = $estado::where("id",$id)->first();
+        $retorno = EUsuario::where("id",$id)->first();
 
         return $retorno->estado;
     }
